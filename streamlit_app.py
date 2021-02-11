@@ -14,8 +14,8 @@ from util import create_explainer, produce_text_display
 
 logger = logging.getLogger(__name__)
 
-MODEL_PATH = '/home/krevas/ner/model'
-LABEL_PATH = '/home/krevas/ner/label/label.txt'
+MODEL_PATH = './model'
+LABEL_PATH = './label/label.txt'
 NO_CUDA = False
 BATCH_SIZE = 32
 
