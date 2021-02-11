@@ -1,0 +1,51 @@
+{
+  "_name_or_path": "/nas/1004674/dialog_electra/dialog-electra-small-v2-pytorch/dialog-electra-small-v2-discriminator",
+  "architectures": [
+    "ElectraForTokenClassification"
+  ],
+  "attention_probs_dropout_prob": 0.1,
+  "embedding_size": 128,
+  "hidden_act": "gelu",
+  "hidden_dropout_prob": 0.1,
+  "hidden_size": 256,
+  "id2label": {
+    "0": "B-DT",
+    "1": "B-LC",
+    "10": "O",
+    "2": "B-OG",
+    "3": "B-PS",
+    "4": "B-TI",
+    "5": "I-DT",
+    "6": "I-LC",
+    "7": "I-OG",
+    "8": "I-PS",
+    "9": "I-TI"
+  },
+  "initializer_range": 0.02,
+  "intermediate_size": 1024,
+  "label2id": {
+    "B-DT": 0,
+    "B-LC": 1,
+    "B-OG": 2,
+    "B-PS": 3,
+    "B-TI": 4,
+    "I-DT": 5,
+    "I-LC": 6,
+    "I-OG": 7,
+    "I-PS": 8,
+    "I-TI": 9,
+    "O": 10
+  },
+  "layer_norm_eps": 1e-12,
+  "max_position_embeddings": 128,
+  "model_type": "electra",
+  "num_attention_heads": 4,
+  "num_hidden_layers": 12,
+  "pad_token_id": 0,
+  "summary_activation": "gelu",
+  "summary_last_dropout": 0.1,
+  "summary_type": "first",
+  "summary_use_proj": true,
+  "type_vocab_size": 2,
+  "vocab_size": 40000
+}
