@@ -129,11 +129,13 @@ if __name__ == "__main__":
     st.set_page_config(page_title='SKPlanet NER', page_icon=':fire:')
     st.title("Korean Named Entity Recognition")
     st.text("")
+    st.subheader('NER Model Description')
+    st.markdown("- 대화체 언어모델인 Dialog-ELECTRA를 fine-tuning하였습니다.\n- 아래와 같이 5 종류의 개체를 텍스트 안에서 찾아주는 모델입니다.")
     explainer = create_explainer(color_dict, ent_dict)
     st.markdown(explainer, unsafe_allow_html=True)
 
     user_prompt = "What text do you want to predict on?"
-    default_input = '위세아이텍은 한국지능정보사회진흥원과 인공지능 허브(AI Hub)운영·유지보수에 관한 단일판매·공급계약을 체결했다고 5일 공시했다.'
+    default_input = 'SK플래닛(대표 이한상)이 경기도 화성시와 함께 시민들에게 실시간으로 대기 중 미세먼지 정보 제공을 위한 미세먼지 간이측정기 100개소를 설치하는 ‘촘촘한 공기질 측정소 설치사업’을 완료했다고 4일 밝혔다.'
     user_input = st.text_area(user_prompt, value=default_input)
     
     if st.button("Analysis"):
