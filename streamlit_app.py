@@ -126,6 +126,8 @@ if __name__ == "__main__":
           "날짜": "DT",
           "시간": "TI"
     }
+    head = '<meta property="og:image" content="https://res-3.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco/v1397203980/c1ea793e5978a97d898af8ca46acb34e.jpg" />'
+    st.markdown(head, unsafe_allow_html=True)
     st.set_page_config(page_title='SKPlanet NER', page_icon=':fire:')
     st.title("Korean Named Entity Recognition")
     st.text("")
