@@ -1,4 +1,5 @@
 import os
+import random
 import logging
 import argparse
 
@@ -21,6 +22,11 @@ BATCH_SIZE = 32
 
 def get_device():
     return "cuda" if torch.cuda.is_available() and not NO_CUDA else "cpu"
+
+@st.cache(allow_output_mutation=True)
+def get_sample():
+    sample = [line.strip() for line in open('./sample.txt')]
+    return sample
 
 @st.cache(allow_output_mutation=True)
 def get_args():
@@ -130,17 +136,36 @@ if __name__ == "__main__":
     st.title("Korean Named Entity Recognition")
     st.text("")
     st.subheader('NER Model Description')
-    st.markdown("- 대화체 언어모델인 Dialog-ELECTRA를 fine-tuning하였습니다.\n- 아래와 같이 5 종류의 개체를 텍스트 안에서 찾아주는 모델입니다.")
+    st.markdown("""- 대화체 언어모델인 Dialog-ELECTRA를 fine-tuning하였습니다.
+                   \n- 아래와 같이 5 종류의 개체를 텍스트 안에서 찾아주는 모델입니다.
+                   \n- Load 버튼을 눌러 샘플 텍스트를 변경할 수 있습니다.""")
     explainer = create_explainer(color_dict, ent_dict)
     st.markdown(explainer, unsafe_allow_html=True)
 
-    user_prompt = "What text do you want to predict on?"
-    default_input = 'SK플래닛(대표 이한상)이 경기도 화성시와 함께 시민들에게 실시간으로 대기 중 미세먼지 정보 제공을 위한 미세먼지 간이측정기 100개소를 설치하는 ‘촘촘한 공기질 측정소 설치사업’을 완료했다고 4일 밝혔다.'
-    user_input = st.text_area(user_prompt, value=default_input)
+    sample_list = get_sample()
     
-    if st.button("Analysis"):
-        entity = predict(user_input)
+    user_prompt = "What text do you want to predict on?"
 
+    text = st.empty()
+    import SessionState
+    session_state = SessionState.get(name='', user_input="")
+    
+    if session_state.user_input == "":
+        user_input = text.text_area(user_prompt, height=150)
+        session_state.user_input = user_input
+    else:
+        user_input = text.text_area(user_prompt, session_state.user_input, height=150)
+        session_state.user_input = user_input
+
+    col1, col2 = st.beta_columns([0.1, 1])
+    
+    if col1.button('Load'):
+        default_input = random.choice(sample_list)
+        user_input = text.text_area(user_prompt, default_input, height=150)
+        session_state.user_input = user_input
+    
+    if col2.button("Analysis"):
+        entity = predict(session_state.user_input)
         st.subheader("Prediction Result")
-        display = produce_text_display(user_input, entity, color_dict)
+        display = produce_text_display(session_state.user_input, entity, color_dict)
         st.markdown(display, unsafe_allow_html=True)
