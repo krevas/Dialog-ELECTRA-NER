@@ -120,15 +120,17 @@ if __name__ == "__main__":
           'TI': ["#e3c477", "#f7b6d2"] # pinks
     }
     ent_dict = {
-          "Person": "PS",
-          "Location": "LC",
-          "Organization": "OG",
-          "Date": "DT",
-          "Time": "TI"
+          "인명": "PS",
+          "장소": "LC",
+          "기관": "OG",
+          "날짜": "DT",
+          "시간": "TI"
     }
 
     st.title("Korean Named Entity Recognition")
     st.text("")
+    explainer = create_explainer(color_dict, ent_dict)
+    st.markdown(explainer, unsafe_allow_html=True)
 
     user_prompt = "What text do you want to predict on?"
     default_input = '위세아이텍은 한국지능정보사회진흥원과 인공지능 허브(AI Hub)운영·유지보수에 관한 단일판매·공급계약을 체결했다고 5일 공시했다.'
@@ -137,8 +139,6 @@ if __name__ == "__main__":
     if st.button("Analysis"):
         entity = predict(user_input)
 
-        st.subheader("Prediction Result:")
+        st.subheader("Prediction Result")
         display = produce_text_display(user_input, entity, color_dict)
-        explainer = create_explainer(color_dict, ent_dict)
-        st.bokeh_chart(explainer)
-        st.bokeh_chart(display)
+        st.markdown(display, unsafe_allow_html=True)
