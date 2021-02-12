@@ -33,7 +33,7 @@ def produce_text_display(text, entity_list, color_dict):
             </span>
             </span>"""
         else:  # Simply change the inline color of the predicted word
-            html = f"""<span style="color: {color}">{s}</span>"""
+            html = f"""<span style="color: {color};font-weight:bold">{s}</span>"""
 
         return html.replace("\n", "")
 
