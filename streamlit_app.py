@@ -126,7 +126,7 @@ if __name__ == "__main__":
           "날짜": "DT",
           "시간": "TI"
     }
-
+    st.set_page_config(page_title='SKPlanet NER', page_icon=':fire:')
     st.title("Korean Named Entity Recognition")
     st.text("")
     explainer = create_explainer(color_dict, ent_dict)
