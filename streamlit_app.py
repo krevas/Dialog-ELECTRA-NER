@@ -157,7 +157,7 @@ if __name__ == "__main__":
         user_input = text.text_area(user_prompt, session_state.user_input, height=150)
         session_state.user_input = user_input
 
-    col1, col2 = st.beta_columns([0.2, 1])
+    col1, col2 = st.beta_columns([0.15, 1])
     
     if col1.button('Example'):
         default_input = random.choice(sample_list)
