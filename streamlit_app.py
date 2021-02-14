@@ -9,6 +9,7 @@ import torch
 from torch.utils.data import TensorDataset, DataLoader, SequentialSampler
 from transformers import AutoModelForTokenClassification
 
+import SessionState
 from loader import convert_input_file_to_tensor_dataset
 from tokenizer import ElectraTokenizerOffset, tokenize
 from util import create_explainer, produce_text_display
@@ -147,7 +148,6 @@ if __name__ == "__main__":
     user_prompt = "What text do you want to predict on?"
 
     text = st.empty()
-    import SessionState
     session_state = SessionState.get(name='', user_input="")
     
     if session_state.user_input == "":
@@ -157,7 +157,7 @@ if __name__ == "__main__":
         user_input = text.text_area(user_prompt, session_state.user_input, height=150)
         session_state.user_input = user_input
 
-    col1, col2 = st.beta_columns([0.1, 1])
+    col1, col2 = st.beta_columns([0.2, 1])
     
     if col1.button('Example'):
         default_input = random.choice(sample_list)
