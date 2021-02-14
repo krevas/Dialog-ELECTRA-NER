@@ -132,13 +132,13 @@ if __name__ == "__main__":
           "날짜": "DT",
           "시간": "TI"
     }
-    st.set_page_config(page_title='SKPlanet NER', page_icon=':fire:')
+    st.set_page_config(page_title='Dialog-ELECTRA NER', page_icon=':fire:')
     st.title("Korean Named Entity Recognition")
     st.text("")
     st.subheader('NER Model Description')
     st.markdown("""- 대화체 언어모델인 Dialog-ELECTRA를 fine-tuning하였습니다.
                    \n- 아래와 같이 5 종류의 개체를 텍스트 안에서 찾아주는 모델입니다.
-                   \n- Load 버튼을 눌러 샘플 텍스트를 변경할 수 있습니다.""")
+                   \n- Example 버튼을 눌러 샘플 텍스트를 변경할 수 있습니다.""")
     explainer = create_explainer(color_dict, ent_dict)
     st.markdown(explainer, unsafe_allow_html=True)
 
@@ -159,7 +159,7 @@ if __name__ == "__main__":
 
     col1, col2 = st.beta_columns([0.1, 1])
     
-    if col1.button('Load'):
+    if col1.button('Example'):
         default_input = random.choice(sample_list)
         user_input = text.text_area(user_prompt, default_input, height=150)
         session_state.user_input = user_input
