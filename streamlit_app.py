@@ -12,7 +12,8 @@ from transformers import AutoModelForTokenClassification
 import SessionState
 from loader import convert_input_file_to_tensor_dataset
 from tokenizer import ElectraTokenizerOffset, tokenize
-from util import create_explainer, produce_text_display
+from streamlit_util import create_explainer, produce_text_display
+from utils import token_check
 
 logger = logging.getLogger(__name__)
 
@@ -98,24 +99,31 @@ def predict(text):
     entity = []
     for line, tokens, preds in zip(raw_lines, lines, preds_list):
         flag = False
+        prev_word = None
         for word, pred in zip(tokens, preds):
-            if 'B-' in pred:
+            if flag and 'B-' in pred:
+                end = word[2]
+                check = token_check(prev_word[0],tag)
+                if check[0]:
+                    end = end - check[1]
+                entity.append((start,end,tag))
                 start = word[2]
-                flag = True
                 tag = pred[2::]
             elif flag and pred =='O':
                 end = word[2]
+                check = token_check(prev_word[0],tag)
+                if check[0]:
+                    end = end - check[1]
                 entity.append((start,end,tag))
                 flag = False
-            elif flag and 'B-' in pred:
-                end = word[2]
-                entity.append((start,end,tag))
+            elif 'B-' in pred:
+                start = word[2]
+                flag = True
+                tag = pred[2::]
+            prev_word = word
         if flag:
             end = len(tokens)
             entity.append((start,end,tag))
-        if entity:
-            for item in entity:
-                print(line[item[0]:item[1]], item[2])
     return entity
 
 if __name__ == "__main__":
