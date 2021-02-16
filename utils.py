@@ -54,24 +54,36 @@ def f1_pre_rec(labels, preds, is_ner=True):
 def show_ner_report(labels, preds):
     return seqeval_metrics.classification_report(labels, preds, suffix=True)
 
-def token_check(token,tag):
+def token_check(token,space,tag):
     check = False
     index = 0
     if token in ['##준이','##서가','##숙이',
                  '##정은','##홍의','##명이',
-                 '##훈의','##수와','##상의'] and tag == 'PS':
+                 '##훈의','##수와','##상의',
+                 '##민이','##준의'] and tag == 'PS':
         check = True
-        index = 2
     elif token in ['##대가','##간의','##시에',
                    '##단의','##여의','##리의',
                    '프랑스와','##위의','##역의',
                    '##역과','##부와','##부를',
                    '##도와','##원이','##오의',
-                   '##z의','##일의']:
+                   '##z의','##일의','##시의',
+                   '##국은','##일까','시에',
+                   '##청과','##원에','##청이',
+                   '##동과','##대에','##선이',
+                   '##구가','##동의','##강의',
+                   '##일부','##관이','##초의',
+                   '##지와','##서에','##당과',
+                   '##현의','##장에','##지에',
+                   '##위가','##대부','##단과',
+                   '##성의','##시도','##소가',
+                   '##부에','##원의','##선의',
+                   '##부의'
+                   ]:
         check = True
+    if space == 1:
         index = 2
-    elif token in ['##일까','시에']:
-        check = True
+    else:
         index = 1
     return (check, index)
 

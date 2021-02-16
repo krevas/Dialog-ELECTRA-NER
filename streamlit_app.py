@@ -5,6 +5,7 @@ import argparse
 
 import streamlit as st
 import numpy as np
+import kss
 import torch
 from torch.utils.data import TensorDataset, DataLoader, SequentialSampler
 from transformers import AutoModelForTokenClassification
@@ -59,8 +60,12 @@ def predict(text):
 
     pad_token_label_id = torch.nn.CrossEntropyLoss().ignore_index
 
-    line = text.strip()
-    lines, raw_lines = [tokenize(tokenizer, line)], [line]
+    if len(text) > 128:
+        raw_lines = kss.split_sentences(text)
+        lines = [tokenize(tokenizer, line) for line in raw_lines]
+    else:
+        line = text.strip()
+        lines, raw_lines = [tokenize(tokenizer, line)], [line]
     dataset = convert_input_file_to_tensor_dataset(lines, args, tokenizer, pad_token_label_id)
     
     sampler = SequentialSampler(dataset)
@@ -96,14 +101,15 @@ def predict(text):
                 preds_list[i].append(slot_label_map[preds[i][j]])
 
 
-    entity = []
+    entity_list = []
     for line, tokens, preds in zip(raw_lines, lines, preds_list):
         flag = False
         prev_word = None
+        entity = []
         for word, pred in zip(tokens, preds):
             if flag and 'B-' in pred:
                 end = word[2]
-                check = token_check(prev_word[0],tag)
+                check = token_check(prev_word[0],prev_word[1],tag)
                 if check[0]:
                     end = end - check[1]
                 entity.append((start,end,tag))
@@ -111,7 +117,7 @@ def predict(text):
                 tag = pred[2::]
             elif flag and pred =='O':
                 end = word[2]
-                check = token_check(prev_word[0],tag)
+                check = token_check(prev_word[0],prev_word[1],tag)
                 if check[0]:
                     end = end - check[1]
                 entity.append((start,end,tag))
@@ -124,7 +130,8 @@ def predict(text):
         if flag:
             end = len(tokens)
             entity.append((start,end,tag))
-    return entity
+        entity_list.append(entity)
+    return entity_list, raw_lines
 
 if __name__ == "__main__":
     color_dict = {
@@ -146,7 +153,6 @@ if __name__ == "__main__":
     st.text("")
     st.subheader('NER Model Description')
     st.markdown("""- 대화체 언어모델인 Dialog-ELECTRA를 fine-tuning하였습니다.
-                   \n- 아래와 같이 5 종류의 개체를 텍스트 안에서 찾아주는 모델입니다.
                    \n- Example 버튼을 눌러 샘플 텍스트를 변경할 수 있습니다.""")
     explainer = create_explainer(color_dict, ent_dict)
     st.markdown(explainer, unsafe_allow_html=True)
@@ -173,7 +179,8 @@ if __name__ == "__main__":
         session_state.user_input = user_input
     
     if col2.button("Analysis"):
-        entity = predict(session_state.user_input)
+        entity, lines = predict(session_state.user_input)
         st.subheader("Prediction Result")
-        display = produce_text_display(session_state.user_input, entity, color_dict)
+        display = produce_text_display(lines, entity, color_dict)
+        
         st.markdown(display, unsafe_allow_html=True)

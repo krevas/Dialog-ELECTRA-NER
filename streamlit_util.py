@@ -11,15 +11,13 @@ def create_explainer(color_dict, ent_dict):
 
     return explainer
 
-
-def produce_text_display(text, entity_list, color_dict):
+def produce_text_display(text_list, entity_list, color_dict):
     def style_wrapper(s, tag, tooltip=False):
-        # Wraps a word that at least one model predicted to be an entity.
         dark, light = color_dict[tag]
         color = dark
         
         if tooltip:
-            long_tag_names = {  # Define longer tag names for tooltip clarity
+            long_tag_names = {
                 "PS": "인명",
                 "LC": "장소",
                 "OG": "기관",
@@ -32,25 +30,29 @@ def produce_text_display(text, entity_list, color_dict):
             </span>
             </span>
             </span>"""
-        else:  # Simply change the inline color of the predicted word
+        else:
             html = f"""<span style="color: {color};font-weight:bold">{s}</span>"""
 
         return html.replace("\n", "")
+    
+    output_html = []
+    for text, entities in zip(text_list, entity_list):
+        if entities:
+            output = ""
+            output += text[0:entities[0][0]]
+            end = entities[0][0]
+            for entity in entities:
+                output += text[end:entity[0]]
+                output += style_wrapper(text[entity[0]:entity[1]], entity[2], False)
+                end = entity[1]
+            output += text[end::]
+        else:
+            output = text
+        output_html.append(output)
 
-    if entity_list:
-        output = ""
-        output += text[0:entity_list[0][0]]
-        end = entity_list[0][0]
-        for entity in entity_list:
-            output += text[end:entity[0]]
-            output += style_wrapper(text[entity[0]:entity[1]], entity[2], False)
-            end = entity[1]
-        output += text[end::]
-    else:
-        output = text
     html_string = (
             """<div style="font-size: 16px; border-color: black";display: flex; justify-content: center;>"""
-        + output
+        + ' '.join(output_html)
         + "</div>"
     )
 
