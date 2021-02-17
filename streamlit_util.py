@@ -52,7 +52,7 @@ def produce_text_display(text_list, entity_list, color_dict):
 
     html_string = (
             """<div style="font-size: 16px; border-color: black";display: flex; justify-content: center;>"""
-        + ' '.join(output_html)
+        + '<br><br>'.join(output_html)
         + "</div>"
     )
 

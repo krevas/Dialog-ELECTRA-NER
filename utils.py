@@ -58,9 +58,12 @@ def token_check(token,space,tag):
     check = False
     index = 0
     if len(token) == 4 and token[:2] == '##' and token[-1] in ['의','에','이','와',
-                                                             '과','은','가','부']:
-        check = True
-    elif token == '시에':
+                                                             '과','은','가','부','를']:
+        if token[2::] not in ['본부','정부','평가']:
+            check = True
+        if token in ['##회의','##서부']and space == 0:
+            check = False
+    elif token in ['시에','##지역인','시의']:
         check = True
     if space == 1:
         index = 2

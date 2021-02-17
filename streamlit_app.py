@@ -15,6 +15,7 @@ from loader import convert_input_file_to_tensor_dataset
 from tokenizer import ElectraTokenizerOffset, tokenize
 from streamlit_util import create_explainer, produce_text_display
 from utils import token_check
+from naver_news import get_naver_news
 
 logger = logging.getLogger(__name__)
 
@@ -25,11 +26,6 @@ BATCH_SIZE = 32
 
 def get_device():
     return "cuda" if torch.cuda.is_available() and not NO_CUDA else "cpu"
-
-@st.cache(allow_output_mutation=True)
-def get_sample():
-    sample = [line.strip() for line in open('./sample.txt')]
-    return sample
 
 @st.cache(allow_output_mutation=True)
 def get_args():
@@ -153,12 +149,10 @@ if __name__ == "__main__":
     st.text("")
     st.subheader('NER Model Description')
     st.markdown("""- 대화체 언어모델인 Dialog-ELECTRA를 fine-tuning하였습니다.
-                   \n- Example 버튼을 눌러 샘플 텍스트를 변경할 수 있습니다.""")
+                   \n- Example 버튼을 누르면 최근 1주일간 뉴스 가운데 하나를 무작위로 가져옵니다.""")
     explainer = create_explainer(color_dict, ent_dict)
     st.markdown(explainer, unsafe_allow_html=True)
 
-    sample_list = get_sample()
-    
     user_prompt = "What text do you want to predict on?"
 
     text = st.empty()
@@ -174,7 +168,7 @@ if __name__ == "__main__":
     col1, col2 = st.beta_columns([0.15, 1])
     
     if col1.button('Example'):
-        default_input = random.choice(sample_list)
+        default_input = get_naver_news()
         user_input = text.text_area(user_prompt, default_input, height=150)
         session_state.user_input = user_input
     
