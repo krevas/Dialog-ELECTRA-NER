@@ -39,7 +39,9 @@ def get_naver_news():
     text = text.strip()
     p = re.compile(r'\(\S*=연합뉴스\)', re.IGNORECASE)
     try:
-        start = p.search(text).span()[0]
+        for match in re.finditer(r'\(\S*=연합뉴스\)',text):
+            pass
+        start = match.start()
     except:
         start = 0
     return text[start::]
