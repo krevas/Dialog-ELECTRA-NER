@@ -15,7 +15,7 @@ def get_naver_news():
     startdate=datetime.today()
 
     while True:
-        date=startdate-timedelta(random.randint(1,7))
+        date=startdate-timedelta(random.randint(1,14))
         date = date.strftime('%Y%m%d')
 
         pages = [num for num in range(1,5)]
@@ -30,7 +30,7 @@ def get_naver_news():
         soup = get_soup_obj(news_url)
         try:
             text = soup.find('div', id='articleBodyContents').get_text()
-            if len(text) > 250 and len(text) < 2000:
+            if len(text) > 300 and len(text) < 2000:
                 break
         except:
             pass
@@ -43,5 +43,3 @@ def get_naver_news():
     except:
         start = 0
     return text[start::]
-
-get_naver_news()

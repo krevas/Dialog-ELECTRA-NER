@@ -144,12 +144,12 @@ if __name__ == "__main__":
           "날짜": "DT",
           "시간": "TI"
     }
-    st.set_page_config(page_title='Dialog-ELECTRA NER', page_icon=':fire:')
-    st.title("Korean Named Entity Recognition")
+    st.set_page_config(page_title='Named Entity Recognition', page_icon=':fire:')
+    st.title("Korean Named Entity Recognition with Dialog-ELECTRA")
     st.text("")
     st.subheader('NER Model Description')
     st.markdown("""- 대화체 언어모델인 Dialog-ELECTRA를 fine-tuning하였습니다.
-                   \n- Example 버튼을 누르면 최근 1주일간 뉴스 가운데 하나를 무작위로 가져옵니다.""")
+                   \n- Example 버튼을 누르면 최근 2주간 뉴스 가운데 하나를 무작위로 가져옵니다.""")
     explainer = create_explainer(color_dict, ent_dict)
     st.markdown(explainer, unsafe_allow_html=True)
 
