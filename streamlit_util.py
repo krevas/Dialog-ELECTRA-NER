@@ -2,7 +2,7 @@ import streamlit as st
 
 def create_explainer(color_dict, ent_dict):
 
-    explainer = """<b><span style="font-weight:bold">Type of entity</span></b><br>"""
+    explainer = """"""
 
     for ent_type in ent_dict:
         dark, light = color_dict[ent_dict[ent_type]]

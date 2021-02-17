@@ -129,6 +129,15 @@ def predict(text):
         entity_list.append(entity)
     return entity_list, raw_lines
 
+def hide_footer():
+    hide_streamlit_style = """
+                <style>
+                #MainMenu {visibility: hidden;}
+                footer {visibility: hidden;}
+                </style>
+                """
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+
 if __name__ == "__main__":
     color_dict = {
           'PS': ["#17becf", "#9edae5"], # blues
@@ -145,12 +154,14 @@ if __name__ == "__main__":
           "시간": "TI"
     }
     st.set_page_config(page_title='Named Entity Recognition', page_icon=':fire:')
+    hide_footer()
     st.title("Korean Named Entity Recognition with Dialog-ELECTRA")
     st.text("")
-    st.subheader('NER Model Description')
-    st.markdown("""- 대화체 언어모델인 Dialog-ELECTRA를 fine-tuning하였습니다.
-                   \n- Example 버튼을 누르면 최근 2주간 뉴스 가운데 하나를 무작위로 가져옵니다.""")
+    st.subheader('Description')
+    st.markdown("""- 대화체 언어모델인 Dialog-ELECTRA-small 모델을 fine-tuning하였습니다.\
+                   \n- Example을 누르면 최근 2주간 작성된 뉴스 중 하나를 샘플로 가져옵니다.""")
     explainer = create_explainer(color_dict, ent_dict)
+    st.subheader('Entity Type')
     st.markdown(explainer, unsafe_allow_html=True)
 
     user_prompt = "What text do you want to predict on?"
