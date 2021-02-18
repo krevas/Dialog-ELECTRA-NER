@@ -3,7 +3,6 @@ import random
 import torch
 import numpy as np
 from numpy.lib.function_base import average
-from scipy.stats import pearsonr, spearmanr
 from seqeval import metrics as seqeval_metrics
 from sklearn import metrics as sklearn_metrics
 
@@ -14,26 +13,6 @@ def set_seed(args):
     torch.manual_seed(args.seed)
     if not args.no_cuda and torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed)
-
-
-def simple_accuracy(labels, preds):
-    return (labels == preds).mean()
-
-
-def acc_score(labels, preds):
-    return {
-        "acc": simple_accuracy(labels, preds),
-    }
-
-
-def pearson_and_spearman(labels, preds):
-    pearson_corr = pearsonr(preds, labels)[0]
-    spearman_corr = spearmanr(preds, labels)[0]
-    return {
-        "pearson": pearson_corr,
-        "spearmanr": spearman_corr,
-        "corr": (pearson_corr + spearman_corr) / 2,
-    }
 
 
 def f1_pre_rec(labels, preds, is_ner=True):
