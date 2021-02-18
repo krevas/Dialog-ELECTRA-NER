@@ -63,7 +63,9 @@ def token_check(token,space,tag):
             check = True
         if token in ['##회의','##서부','##아이']and space == 0:
             check = False
-    elif token in ['시에','##지역인','시의']:
+    elif token in ['시에','##지역인','시의',
+                   '##인양','##주로','전인',
+                   '##지로','경찰의']:
         check = True
     if space == 1:
         index = 2
