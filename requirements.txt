@@ -6,3 +6,4 @@ transformers==4.1.1
 seqeval
 kss
 beautifulsoup4
+matplotlib
