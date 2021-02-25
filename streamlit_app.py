@@ -124,7 +124,10 @@ def predict(text):
                 tag = pred[2::]
             prev_word = word
         if flag:
-            end = len(tokens)
+            end = len(line)
+            check = token_check(prev_word[0],prev_word[1],tag)
+            if check[0]:
+                end = end - check[1]
             entity.append((start,end,tag))
         entity_list.append(entity)
     return entity_list, raw_lines
