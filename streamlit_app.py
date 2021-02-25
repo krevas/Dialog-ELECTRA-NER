@@ -182,9 +182,12 @@ if __name__ == "__main__":
     col1, col2 = st.beta_columns([0.15, 1])
     
     if col1.button('Example'):
-        default_input = get_naver_news()
-        user_input = text.text_area(user_prompt, default_input, height=150)
-        session_state.user_input = user_input
+        try:
+            default_input = get_naver_news()
+            user_input = text.text_area(user_prompt, default_input, height=150)
+            session_state.user_input = user_input
+        except:
+            pass
     
     if col2.button("Analysis"):
         entity, lines = predict(session_state.user_input)
