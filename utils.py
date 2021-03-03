@@ -117,14 +117,14 @@ def token_check(token,space,tag):
             check = True
         if token in ['##레이','##라이','##서부']:
             check = False
-        if token in ['##회의','##아이',
+        if token in ['##회의','##아이','##하이',
                      '##베이','##파이','##북부']and space == 0:
             check = False
     elif token in ['시에','##지역인','시의',
                    '##인양','##주로','전인',
                    '##지로','경찰의','##씨도',
                    '만이','이모','달도',
-                   '##부로']:
+                   '##부로','##일대']:
         check = True
     if space == 1:
         index = 2
