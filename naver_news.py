@@ -30,18 +30,17 @@ def get_naver_news():
         soup = get_soup_obj(news_url)
         try:
             text = soup.find('div', id='articleBodyContents').get_text()
-            if len(text) > 300 and len(text) < 2000:
+            text = text.replace('// flash 오류를 우회하기 위한 함수 추가','')
+            text = text.replace('function _flash_removeCallback() {}','')
+            text = text.strip()
+            try:
+                for match in re.finditer(r'\(\S*=연합뉴스\)',text):
+                    pass
+                start = match.start()
+            except:
+                start = 0
+            if len(text[start::]) > 500 and len(text[start::]) < 5000:
                 break
         except:
             pass
-    text = text.replace('// flash 오류를 우회하기 위한 함수 추가','')
-    text = text.replace('function _flash_removeCallback() {}','')
-    text = text.strip()
-    p = re.compile(r'\(\S*=연합뉴스\)', re.IGNORECASE)
-    try:
-        for match in re.finditer(r'\(\S*=연합뉴스\)',text):
-            pass
-        start = match.start()
-    except:
-        start = 0
     return text[start::]
