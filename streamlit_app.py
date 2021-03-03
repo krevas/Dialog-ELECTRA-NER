@@ -108,6 +108,8 @@ def predict(text):
                 check = token_check(prev_word[0],prev_word[1],tag)
                 if check[0]:
                     end = end - check[1]
+                else:
+                    end = end - prev_word[1]
                 entity.append((start,end,tag))
                 start = word[2]
                 tag = pred[2::]
@@ -116,6 +118,8 @@ def predict(text):
                 check = token_check(prev_word[0],prev_word[1],tag)
                 if check[0]:
                     end = end - check[1]
+                else:
+                    end = end - prev_word[1]
                 entity.append((start,end,tag))
                 flag = False
             elif 'B-' in pred:
@@ -128,6 +132,8 @@ def predict(text):
             check = token_check(prev_word[0],prev_word[1],tag)
             if check[0]:
                 end = end - check[1]
+            else:
+                end = end - prev_word[1]
             entity.append((start,end,tag))
         entity_list.append(entity)
     return entity_list, raw_lines
