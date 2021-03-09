@@ -115,7 +115,7 @@ def token_check(token,space,tag):
                                                              '과','은','가','부','를']:
         if token[2::] not in ['본부','정부','평가','베이','웨이']:
             check = True
-        if token in ['##레이','##라이','##서부','##케이']:
+        if token in ['##레이','##라이','##서부','##케이','##사이','##에이']:
             check = False
         if token in ['##회의','##아이','##하이',
                      '##베이','##파이','##북부']and space == 0:
@@ -124,7 +124,7 @@ def token_check(token,space,tag):
                    '##인양','##주로','전인',
                    '##지로','경찰의','##씨도',
                    '만이','이모','달도',
-                   '##부로','##일대']:
+                   '##부로','##일대','##비로']:
         check = True
     if space == 1:
         index = 2
