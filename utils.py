@@ -125,7 +125,7 @@ def token_check(token,space,tag):
                    '##지로','경찰의','##씨도',
                    '만이','이모','달도',
                    '##부로','##일대','##비로',
-                   '후인']:
+                   '후인','이상의']:
         check = True
     if space == 1:
         index = 2
