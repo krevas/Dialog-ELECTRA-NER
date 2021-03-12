@@ -112,7 +112,7 @@ def token_check(token,space,tag):
     check = False
     index = 0
     if len(token) == 4 and token[:2] == '##' and token[-1] in ['의','에','이','와',
-                                                             '과','은','가','부','를']:
+                                                             '과','은','가','부','를','는']:
         if token[2::] not in ['본부','정부','평가','베이','웨이']:
             check = True
         if token in ['##레이','##라이','##서부','##케이','##사이','##에이','##바이']:
