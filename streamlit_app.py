@@ -19,17 +19,20 @@ from naver_news import get_naver_news
 
 logger = logging.getLogger(__name__)
 
-MODEL_PATH = './model'
-LABEL_PATH = './label/label.txt'
+MODEL_PATH = "./model"
+LABEL_PATH = "./label/label.txt"
 NO_CUDA = False
 BATCH_SIZE = 32
+
 
 def get_device():
     return "cuda" if torch.cuda.is_available() and not NO_CUDA else "cpu"
 
+
 @st.cache(allow_output_mutation=True)
 def get_args():
-    return torch.load(os.path.join(MODEL_PATH, 'training_args.bin'))
+    return torch.load(os.path.join(MODEL_PATH, "training_args.bin"))
+
 
 @st.cache(allow_output_mutation=True)
 def load_model(device):
@@ -40,12 +43,15 @@ def load_model(device):
         model = AutoModelForTokenClassification.from_pretrained(MODEL_PATH)
         model.to(device)
         model.eval()
-        tokenizer = ElectraTokenizerOffset.from_pretrained(MODEL_PATH, do_lower_case=False)
+        tokenizer = ElectraTokenizerOffset.from_pretrained(
+            MODEL_PATH, do_lower_case=False
+        )
         logger.info("***** Model Loaded *****")
     except:
         raise Exception("Some model files might be missing...")
 
     return model, tokenizer
+
 
 def predict(text):
 
@@ -62,8 +68,10 @@ def predict(text):
     else:
         line = text.strip()
         lines, raw_lines = [tokenize(tokenizer, line)], [line]
-    dataset = convert_input_file_to_tensor_dataset(lines, args, tokenizer, pad_token_label_id)
-    
+    dataset = convert_input_file_to_tensor_dataset(
+        lines, args, tokenizer, pad_token_label_id
+    )
+
     sampler = SequentialSampler(dataset)
     data_loader = DataLoader(dataset, sampler=sampler, batch_size=BATCH_SIZE)
 
@@ -73,9 +81,7 @@ def predict(text):
     for batch in data_loader:
         batch = tuple(t.to(device) for t in batch)
         with torch.no_grad():
-            inputs = {"input_ids": batch[0],
-                      "attention_mask": batch[1],
-                      "labels": None}
+            inputs = {"input_ids": batch[0], "attention_mask": batch[1], "labels": None}
             if args.model_type != "distilkobert":
                 inputs["token_type_ids"] = batch[2]
             outputs = model(**inputs)
@@ -86,7 +92,9 @@ def predict(text):
                 all_slot_label_mask = batch[3].detach().cpu().numpy()
             else:
                 preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                all_slot_label_mask = np.append(all_slot_label_mask, batch[3].detach().cpu().numpy(), axis=0)
+                all_slot_label_mask = np.append(
+                    all_slot_label_mask, batch[3].detach().cpu().numpy(), axis=0
+                )
 
     preds = np.argmax(preds, axis=2)
     slot_label_map = {i: label for i, label in enumerate(label_lst)}
@@ -96,45 +104,45 @@ def predict(text):
             if all_slot_label_mask[i, j] != pad_token_label_id:
                 preds_list[i].append(slot_label_map[preds[i][j]])
 
-
     entity_list = []
     for line, tokens, preds in zip(raw_lines, lines, preds_list):
         flag = False
         prev_word = None
         entity = []
         for word, pred in zip(tokens, preds):
-            if flag and 'B-' in pred:
+            if flag and "B-" in pred:
                 end = word[2]
-                check = token_check(prev_word[0],prev_word[1],tag)
+                check = token_check(prev_word[0], prev_word[1], tag)
                 if check[0]:
                     end = end - check[1]
                 else:
                     end = end - prev_word[1]
-                entity.append((start,end,tag))
+                entity.append((start, end, tag))
                 start = word[2]
                 tag = pred[2::]
-            elif flag and pred =='O':
+            elif flag and pred == "O":
                 end = word[2]
-                check = token_check(prev_word[0],prev_word[1],tag)
+                check = token_check(prev_word[0], prev_word[1], tag)
                 if check[0]:
                     end = end - check[1]
                 else:
                     end = end - prev_word[1]
-                entity.append((start,end,tag))
+                entity.append((start, end, tag))
                 flag = False
-            elif 'B-' in pred:
+            elif "B-" in pred:
                 start = word[2]
                 flag = True
                 tag = pred[2::]
             prev_word = word
         if flag:
             end = len(line)
-            check = token_check(prev_word[0],prev_word[1],tag)
+            check = token_check(prev_word[0], prev_word[1], tag)
             if check[0]:
                 end = end - check[1]
-            entity.append((start,end,tag))
+            entity.append((start, end, tag))
         entity_list.append(entity)
     return entity_list, raw_lines
+
 
 def hide_footer():
     hide_streamlit_style = """
@@ -143,39 +151,36 @@ def hide_footer():
                 footer {visibility: hidden;}
                 </style>
                 """
-    st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 
 if __name__ == "__main__":
     color_dict = {
-          'PS': ["#17becf", "#9edae5"], # blues
-          'LC': ["#9467bd", "#c5b0d5"], # purples
-          'OG': ["#74c476", "#c7e9c0"], # greens
-          'DT': ["#e377c2", "#f7b6d2"], # pinks
-          'TI': ["#e3c477", "#f7b6d2"] # pinks
+        "PS": ["#17becf", "#9edae5"],  # blues
+        "LC": ["#9467bd", "#c5b0d5"],  # purples
+        "OG": ["#74c476", "#c7e9c0"],  # greens
+        "DT": ["#e377c2", "#f7b6d2"],  # pinks
+        "TI": ["#e3c477", "#f7b6d2"],  # pinks
     }
-    ent_dict = {
-          "인명": "PS",
-          "장소": "LC",
-          "기관": "OG",
-          "날짜": "DT",
-          "시간": "TI"
-    }
-    st.set_page_config(page_title='Named Entity Recognition', page_icon=':fire:')
+    ent_dict = {"인명": "PS", "장소": "LC", "기관": "OG", "날짜": "DT", "시간": "TI"}
+    st.set_page_config(page_title="Dialog-KoELECTRA NER", page_icon=":fire:")
     hide_footer()
-    st.title("Korean Named Entity Recognition with Dialog-ELECTRA")
+    st.title("Korean Named Entity Recognition with Dialog-KoELECTRA")
     st.text("")
-    st.subheader('Description')
-    st.markdown("""- 대화체 언어모델인 Dialog-ELECTRA-small 모델을 fine-tuning하였습니다.\
-                   \n- Example을 누르면 최근 2주간 작성된 뉴스 중 하나를 샘플로 가져옵니다.""")
+    st.subheader("Description")
+    st.markdown(
+        """- 대화체 언어모델인 Dialog-KoELECTRA-small 모델을 fine-tuning하였습니다.\
+                   \n- Example을 누르면 최근 2주간 작성된 뉴스 중 하나를 샘플로 가져옵니다."""
+    )
     explainer = create_explainer(color_dict, ent_dict)
-    st.subheader('Entity Type')
+    st.subheader("Entity Type")
     st.markdown(explainer, unsafe_allow_html=True)
 
     user_prompt = "What text do you want to predict on?"
 
     text = st.empty()
-    session_state = SessionState.get(name='', user_input="")
-    
+    session_state = SessionState.get(name="", user_input="")
+
     if session_state.user_input == "":
         user_input = text.text_area(user_prompt, height=150)
         session_state.user_input = user_input
@@ -184,18 +189,18 @@ if __name__ == "__main__":
         session_state.user_input = user_input
 
     col1, col2 = st.beta_columns([0.15, 1])
-    
-    if col1.button('Example'):
+
+    if col1.button("Example"):
         try:
             default_input = get_naver_news()
             user_input = text.text_area(user_prompt, default_input, height=150)
             session_state.user_input = user_input
         except:
             pass
-    
+
     if col2.button("Analysis"):
         entity, lines = predict(session_state.user_input)
         st.subheader("Prediction Result")
         display = produce_text_display(lines, entity, color_dict)
-        
+
         st.markdown(display, unsafe_allow_html=True)
